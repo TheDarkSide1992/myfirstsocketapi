@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using Fleck;
 using lib;
 using socketAPIFirst.middleWare;
@@ -8,6 +9,7 @@ namespace socketAPIFirst;
 public class MessageDTO:BaseDto
 {
     //public string eventType { get; set; }
+    [MinLength(2)]
     public string content { get; set; }
 }
 
@@ -33,5 +35,6 @@ public class ClientWantsToEchoServer : BaseEventHandler<MessageDTO>
 
 public class ServerEchosClient : BaseDto
 {
+    [MinLength(2)]
     public String echoValue {get; set; }
 }

@@ -1,13 +1,16 @@
-﻿using Fleck;
+﻿using System.ComponentModel.DataAnnotations;
+using Fleck;
 using lib;
+using socketAPIFirst.middleWare;
 
 namespace socketAPIFirst;
 
 public class ClientWantsToSignInDto : BaseDto
 {
-    public string UserName { get; set; }
+    [MinLength(2)] public string UserName { get; set; }
 }
 
+[ValidateDataAnnotations]
 public class ClientWantsToSignIn : BaseEventHandler<ClientWantsToSignInDto>
 {
     public override Task Handle(ClientWantsToSignInDto dto, IWebSocketConnection socket)

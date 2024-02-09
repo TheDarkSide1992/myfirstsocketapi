@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using Fleck;
 using lib;
 using socketAPIFirst.middleWare;
@@ -30,5 +31,6 @@ public class ClientWantToBroadCast : BaseEventHandler<MessageDTO>
 
 public class ServerBroadcastClients : BaseDto
 {
+    [MinLength(2)]
     public String broadcastValue {get; set; }
 }

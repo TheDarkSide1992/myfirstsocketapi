@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using Fleck;
 using lib;
 using socketAPIFirst.middleWare;
@@ -36,6 +37,7 @@ public class ClientWantsToEnterRoom(Reposetory repo) : BaseEventHandler<ClientWa
 
 public class ServerAddslientToRoom : BaseDto
 {
+    [MinLength(2)]
     public string message { get; set; }
 }
 

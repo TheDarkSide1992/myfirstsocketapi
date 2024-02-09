@@ -8,7 +8,7 @@ namespace socketAPIFirst;
 
 public class ClientWantsToBroadcastToRoomDto : BaseDto
 {
-    [MinLength(8)]
+    [MinLength(2)]
     public string broadCastRoomMessage { get; set; }
     public int roomId { get; set; }
 }
@@ -36,6 +36,8 @@ public class ClientWantsToBroadcastToRoom(Reposetory repo)  : BaseEventHandler<C
 }
 
 public class ServerBroadcastMessageToRoom : BaseDto{
+    [MinLength(2)]
     public string Message { get; set; }
+    [MinLength(2)]
     public string UserName { get; set; }
 }
