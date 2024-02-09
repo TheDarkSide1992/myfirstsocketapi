@@ -1,0 +1,13 @@
+<p>glonal Message</p>
+<input [formControl]="messageContent">
+  <button (click)="echoMessage()"> echo </button>
+  <button (click)="sendMessage()"> send-broadcast</button>
+<p></p>
+<p>Pokeee</p>
+<input [formControl]="messageContent">
+<button (click)="SendPoke()">Poke</button>
+
+<h1></h1>
+{{messages | json}}
+
+

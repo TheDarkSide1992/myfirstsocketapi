@@ -1,0 +1,11 @@
+<script>
+
+    const socket = new WebSocket("ws://localhost:8181");
+
+    socket.addEventListener("open", (event) => {
+
+        socket.send("Hello world!");
+
+    });
+
+</script>
