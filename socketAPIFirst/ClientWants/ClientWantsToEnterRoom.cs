@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Fleck;
 using lib;
+using socketAPIFirst.middleWare;
 
 namespace socketAPIFirst;
 
@@ -10,6 +11,8 @@ public class ClientWantsToEnterRoomDto : BaseDto
     
 }
 
+[ValidateUsername]
+[ValidateDataAnnotations]
 public class ClientWantsToEnterRoom(Reposetory repo) : BaseEventHandler<ClientWantsToEnterRoomDto>
 {
     public override Task Handle(ClientWantsToEnterRoomDto dto, IWebSocketConnection socket)

@@ -3,7 +3,14 @@ using System.Reflection;
 using System.Text.Json;
 using Fleck;
 using lib;
+using Serilog;
 using socketAPIFirst;
+using socketAPIFirst.middleWare;
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console(
+        outputTemplate: "\n{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}\n")
+    .CreateLogger();
 
 var server = new WebSocketServer("ws://0.0.0.0:8181");
 var builder = WebApplication.CreateBuilder(args);
@@ -63,9 +70,7 @@ server.Start(ws =>
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
-            Console.WriteLine(e.InnerException);
-            Console.WriteLine(e.StackTrace);
+            e.Handle(ws,e.Message);
         }
     };
     

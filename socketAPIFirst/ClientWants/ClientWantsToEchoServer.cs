@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Fleck;
 using lib;
+using socketAPIFirst.middleWare;
 
 namespace socketAPIFirst;
 
@@ -10,6 +11,7 @@ public class MessageDTO:BaseDto
     public string content { get; set; }
 }
 
+[ValidateDataAnnotations]
 public class ClientWantsToEchoServer : BaseEventHandler<MessageDTO>
 {
     public override Task Handle(MessageDTO dto, IWebSocketConnection socket)

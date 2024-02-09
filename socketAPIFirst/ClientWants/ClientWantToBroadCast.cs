@@ -1,9 +1,12 @@
 ﻿using System.Text.Json;
 using Fleck;
 using lib;
+using socketAPIFirst.middleWare;
 
 namespace socketAPIFirst;
 
+
+[ValidateDataAnnotations]
 public class ClientWantToBroadCast : BaseEventHandler<MessageDTO>
 {
     public override Task Handle(MessageDTO dto, IWebSocketConnection socket)
