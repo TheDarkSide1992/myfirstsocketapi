@@ -35,6 +35,6 @@ jobs:
       #Runs the api and the test, once finished it wil terminate the api so the proces can finish
 
       - name: Run the APITest
-        run: cd Tests && dotnet tests
+        run: cd Tests && dotnet test
         env:
           pgconn: ${{secrets.pgconn}}
