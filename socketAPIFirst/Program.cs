@@ -1,4 +1,3 @@
-
 using System.Reflection;
 using System.Text.Json;
 using Fleck;
@@ -7,74 +6,89 @@ using Serilog;
 using socketAPIFirst;
 using socketAPIFirst.middleWare;
 
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console(
-        outputTemplate: "\n{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}\n")
-    .CreateLogger();
-
-var server = new WebSocketServer("ws://0.0.0.0:8181");
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddNpgsqlDataSource(Utilities.ProperlyFormattedConnectionString,
-    dataSourceBuilder => dataSourceBuilder.EnableParameterLogging()); 
-
-var clientEventHandler = builder.FindAndInjectClientEventHandlers(Assembly.GetExecutingAssembly());
-builder.Services.AddSingleton<Reposetory>();
-
-var app = builder.Build();
-
-server.Start(ws =>
+public static class StartUp
 {
-    ws.OnOpen = () =>
+    public static void Main(String[] args)
     {
-        StateService.AddConection(ws);
-        
-        var serverNote = new ServerNotefication();
-        serverNote.eventType = "ServerNotefication";
-        serverNote.content = "a new member entered the chat: " + StateService.WsConections.Count;
-        
-        var messageToClient = JsonSerializer.Serialize(serverNote);
-        
-        foreach (var webSocketConnection in StateService.WsConections)
-        {
-            webSocketConnection.Value.Connection.Send(messageToClient);
-        }
-        
-        Console.WriteLine("\n connection count is currently: " + StateService.WsConections.Count);
-    };
+        var app = StatUp(args);
+        app.Run();
+    }
 
-    ws.OnClose = () =>
+    public static WebApplication StatUp(String[] args)
     {
-        StateService.WsConections.Remove(ws.ConnectionInfo.Id);
-        
-        var serverNote = new ServerNotefication();
-        serverNote.eventType = "ServerNotefication";
-        serverNote.content = "a member left the chat";
-        
-        var messageToClient = JsonSerializer.Serialize(serverNote);
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console(
+                outputTemplate: "\n{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}\n")
+            .CreateLogger();
 
-        foreach (var webSocketConnection in StateService.WsConections)
+        var server = new WebSocketServer("ws://0.0.0.0:8181");
+        var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.AddNpgsqlDataSource(Utilities.ProperlyFormattedConnectionString,
+            dataSourceBuilder => dataSourceBuilder.EnableParameterLogging());
+
+        var clientEventHandler = builder.FindAndInjectClientEventHandlers(Assembly.GetExecutingAssembly());
+        builder.Services.AddSingleton<Reposetory>();
+
+        var app = builder.Build();
+
+        server.Start(ws =>
         {
-            webSocketConnection.Value.Connection.Send(messageToClient);
-        }
-        
-        Console.WriteLine("\n connection count is currently: "+ StateService.WsConections.Count);
-    };
+            ws.OnOpen = () =>
+            {
+                StateService.AddConection(ws);
+
+                var serverNote = new ServerNotefication();
+                serverNote.eventType = "ServerNotefication";
+                serverNote.content = "a new member entered the chat: " + StateService.WsConections.Count;
+
+                var messageToClient = JsonSerializer.Serialize(serverNote);
+
+                foreach (var webSocketConnection in StateService.WsConections)
+                {
+                    webSocketConnection.Value.Connection.Send(messageToClient);
+                }
+
+                Console.WriteLine("\n connection count is currently: " + StateService.WsConections.Count);
+            };
+
+            ws.OnClose = () =>
+            {
+                StateService.WsConections.Remove(ws.ConnectionInfo.Id);
+
+                var serverNote = new ServerNotefication();
+                serverNote.eventType = "ServerNotefication";
+                serverNote.content = "a member left the chat";
+
+                var messageToClient = JsonSerializer.Serialize(serverNote);
+
+                foreach (var webSocketConnection in StateService.WsConections)
+                {
+                    webSocketConnection.Value.Connection.Send(messageToClient);
+                }
+
+                Console.WriteLine("\n connection count is currently: " + StateService.WsConections.Count);
+            };
 
 
-    ws.OnMessage = async message =>
-    {
-        try
-        {
-            await app.InvokeClientEventHandler(clientEventHandler, ws, message);
-        }
-        catch(Exception e)
-        {
-            e.Handle(ws,e.Message);
-        }
-    };
-    
-    /*
+            ws.OnMessage = async message =>
+            {
+                try
+                {
+                    await app.InvokeClientEventHandler(clientEventHandler, ws, message);
+                }
+                catch (Exception e)
+                {
+                    e.Handle(ws, e.Message);
+                }
+            };
+        });
+
+        return app;
+    }
+}
+
+/*
     ws.OnMessage = message =>
     {
         var m = JsonSerializer.Deserialize<BaseDTOMessage>(message);
@@ -117,13 +131,9 @@ server.Start(ws =>
        //wsConections[2].Send("ye6");
     };
     */
-});
 
-WebApplication.CreateBuilder(args).Build().Run();
-
-public class ServerNotefication:BaseDto
+public class ServerNotefication : BaseDto
 {
     public string eventType { get; set; }
     public Object content { get; set; }
 }
-

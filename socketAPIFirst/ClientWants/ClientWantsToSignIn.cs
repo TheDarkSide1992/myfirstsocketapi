@@ -18,7 +18,7 @@ public class ClientWantsToSignIn : BaseEventHandler<ClientWantsToSignInDto>
         StateService.WsConections[socket.ConnectionInfo.Id].UserName = dto.UserName;
         Console.WriteLine(dto.UserName + "signed in");
 
-        socket.Send("you signed in");
+       // socket.Send("you signed in");
         return Task.CompletedTask;
     }
 }

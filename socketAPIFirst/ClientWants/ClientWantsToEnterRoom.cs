@@ -19,10 +19,12 @@ public class ClientWantsToEnterRoom(Reposetory repo) : BaseEventHandler<ClientWa
     public override Task Handle(ClientWantsToEnterRoomDto dto, IWebSocketConnection socket)
     {
         var joinedRoom = StateService.AddToRoom(socket,dto.roomId);
-        socket.Send(JsonSerializer.Serialize(new ServerAddslientToRoom()
+        var msg = JsonSerializer.Serialize(new ServerAddsClientToRoom()
         {
             message = socket.ConnectionInfo.Id + " Conected to room " + dto.roomId
-        }));
+        });
+        Console.WriteLine(msg);
+        socket.Send(msg);
 
         var messagesArr = new ServerSendsOlderMessagesToClient()
         {
@@ -35,7 +37,7 @@ public class ClientWantsToEnterRoom(Reposetory repo) : BaseEventHandler<ClientWa
     }
 }
 
-public class ServerAddslientToRoom : BaseDto
+public class ServerAddsClientToRoom : BaseDto
 {
     [MinLength(2)]
     public string message { get; set; }

@@ -6,7 +6,7 @@ using socketAPIFirst.middleWare;
 
 namespace socketAPIFirst;
 
-public class MessageDTO:BaseDto
+public class ClientWantsToEchoServerDTO:BaseDto
 {
     //public string eventType { get; set; }
     [MinLength(2)]
@@ -14,9 +14,9 @@ public class MessageDTO:BaseDto
 }
 
 [ValidateDataAnnotations]
-public class ClientWantsToEchoServer : BaseEventHandler<MessageDTO>
+public class ClientWantsToEchoServer : BaseEventHandler<ClientWantsToEchoServerDTO>
 {
-    public override Task Handle(MessageDTO dto, IWebSocketConnection socket)
+    public override Task Handle(ClientWantsToEchoServerDTO dto, IWebSocketConnection socket)
     {
         Console.WriteLine("someone echoed");
         

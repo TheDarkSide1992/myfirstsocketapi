@@ -8,9 +8,9 @@ namespace socketAPIFirst;
 
 
 [ValidateDataAnnotations]
-public class ClientWantToBroadCast : BaseEventHandler<MessageDTO>
+public class ClientWantToBroadCast : BaseEventHandler<ClientWantsToEchoServerDTO>
 {
-    public override Task Handle(MessageDTO dto, IWebSocketConnection socket)
+    public override Task Handle(ClientWantsToEchoServerDTO dto, IWebSocketConnection socket)
     {
         Console.WriteLine("someone broad cast");
         

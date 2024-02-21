@@ -4,9 +4,9 @@ using lib;
 
 namespace socketAPIFirst;
 
-public class ServerNoteficationDto : BaseEventHandler<MessageDTO>
+public class ServerNoteficationDto : BaseEventHandler<ClientWantsToEchoServerDTO>
 {
-    public override Task Handle(MessageDTO dto, IWebSocketConnection socket)
+    public override Task Handle(ClientWantsToEchoServerDTO dto, IWebSocketConnection socket)
     {
         var note = new ServerNotefication()
         {

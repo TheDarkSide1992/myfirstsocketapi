@@ -7,9 +7,9 @@ namespace socketAPIFirst;
 
 
 [ValidateDataAnnotations]
-public class ClientWantToPoke : BaseEventHandler<MessageDTO>
+public class ClientWantToPoke : BaseEventHandler<ClientWantsToEchoServerDTO>
 {
-    public override Task Handle(MessageDTO dto, IWebSocketConnection socket)
+    public override Task Handle(ClientWantsToEchoServerDTO dto, IWebSocketConnection socket)
     {
         Console.WriteLine("someone poked: " +dto.content );
         
