@@ -39,12 +39,21 @@ public class Tests
         {
             roomId = 1
         }, r => r.Count(dto => dto.eventType == nameof(ServerAddsClientToRoom)) == 1);
+        await ws.DoAndAssert(new ClientWantsToEnterRoomDto()
+        {
+            roomId = 2
+        }, r => r.Count(dto => dto.eventType == nameof(ServerAddsClientToRoom)) == 1);
 
         
         await ws.DoAndAssert(new ClientWantsToBroadcastToRoomDto()
         {
             broadCastRoomMessage = "Hello my friend",
             roomId = 1
+        }, m => m.Count(dto => dto.eventType == nameof(ServerBroadcastMessageToRoom)) == 1);
+        await ws.DoAndAssert(new ClientWantsToBroadcastToRoomDto()
+        {
+            broadCastRoomMessage = "Hello my friend I dont have",
+            roomId = 2
         }, m => m.Count(dto => dto.eventType == nameof(ServerBroadcastMessageToRoom)) == 1);
         
         await ws2.DoAndAssert(new ClientWantsToBroadcastToRoomDto()
