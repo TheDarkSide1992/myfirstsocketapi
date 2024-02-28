@@ -2,6 +2,7 @@
 using System.Text.Json;
 using Fleck;
 using lib;
+using socketAPIFirst.AIFilter;
 using socketAPIFirst.middleWare;
 
 namespace socketAPIFirst;
@@ -17,8 +18,11 @@ public class ClientWantsToBroadcastToRoomDto : BaseDto
 [ValidateDataAnnotations]
 public class ClientWantsToBroadcastToRoom(Reposetory repo)  : BaseEventHandler<ClientWantsToBroadcastToRoomDto>
 {
-    public override Task Handle(ClientWantsToBroadcastToRoomDto dto, IWebSocketConnection socket)
+    public override async Task Handle(ClientWantsToBroadcastToRoomDto dto, IWebSocketConnection socket)
     {
+        AiToxicFilter filter = new AiToxicFilter();
+        await filter.IsMessageToxic(dto.broadCastRoomMessage, repo, StateService.WsConections[socket.ConnectionInfo.Id].UserName);
+        
         var message = new ServerBroadcastMessageToRoom()
         {
             Message = dto.broadCastRoomMessage,
@@ -31,7 +35,6 @@ public class ClientWantsToBroadcastToRoom(Reposetory repo)  : BaseEventHandler<C
         
         //TODO Save Message To DB
         
-        return Task.CompletedTask;
     }
 }
 

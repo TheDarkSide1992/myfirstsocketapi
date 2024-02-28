@@ -18,6 +18,7 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="uldahlalex.websocket.boilerplate" Version="1.6.0" />
+
   </ItemGroup>
 
 

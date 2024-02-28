@@ -2,6 +2,7 @@
 using System.Text.Json;
 using Fleck;
 using lib;
+using socketAPIFirst.AIFilter;
 using socketAPIFirst.middleWare;
 
 namespace socketAPIFirst;
@@ -14,11 +15,13 @@ public class ClientWantsToEchoServerDTO:BaseDto
 }
 
 [ValidateDataAnnotations]
-public class ClientWantsToEchoServer : BaseEventHandler<ClientWantsToEchoServerDTO>
+public class ClientWantsToEchoServer(Reposetory repo) : BaseEventHandler<ClientWantsToEchoServerDTO>
 {
-    public override Task Handle(ClientWantsToEchoServerDTO dto, IWebSocketConnection socket)
+    public override async Task Handle(ClientWantsToEchoServerDTO dto, IWebSocketConnection socket)
     {
         Console.WriteLine("someone echoed");
+        AiToxicFilter filter = new AiToxicFilter();
+        await filter.IsMessageToxic(dto.content, repo, StateService.WsConections[socket.ConnectionInfo.Id].UserName);
         
         var echo = new ServerEchosClient()
         {
@@ -28,8 +31,6 @@ public class ClientWantsToEchoServer : BaseEventHandler<ClientWantsToEchoServerD
 
         socket.Send(messageToClient);
         
-        
-        return Task.CompletedTask;
     }
 }
 

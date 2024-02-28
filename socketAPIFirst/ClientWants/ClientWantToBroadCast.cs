@@ -2,16 +2,20 @@
 using System.Text.Json;
 using Fleck;
 using lib;
+using socketAPIFirst.AIFilter;
 using socketAPIFirst.middleWare;
 
 namespace socketAPIFirst;
 
 
 [ValidateDataAnnotations]
-public class ClientWantToBroadCast : BaseEventHandler<ClientWantsToEchoServerDTO>
+public class ClientWantToBroadCast(Reposetory repo) : BaseEventHandler<ClientWantsToEchoServerDTO>
 {
-    public override Task Handle(ClientWantsToEchoServerDTO dto, IWebSocketConnection socket)
+    public override async Task Handle(ClientWantsToEchoServerDTO dto, IWebSocketConnection socket)
     {
+        AiToxicFilter filter = new AiToxicFilter();
+        await filter.IsMessageToxic(dto.content, repo, StateService.WsConections[socket.ConnectionInfo.Id].UserName);
+        
         Console.WriteLine("someone broad cast");
         
         var broadcast = new ServerBroadcastClients()
@@ -25,7 +29,6 @@ public class ClientWantToBroadCast : BaseEventHandler<ClientWantsToEchoServerDTO
             webSocketConnection.Connection.Send(messageToClient);
         }
 
-        return Task.CompletedTask;
     }
 }
 

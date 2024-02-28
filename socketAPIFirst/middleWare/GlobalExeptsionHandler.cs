@@ -15,6 +15,19 @@ public static class GlobalExeptsionHandler
             recivedMessage = message,
             errorMessage = exception.Message
         }));
+
+        if (exception.Message == "Dont speak like that" || exception.Message == "YOU ARE BANED")
+        {
+            //TODO Implement ban
+            
+            socket.Send(JsonSerializer.Serialize(new ServerSendsErrorMessageToClient()
+            {
+                recivedMessage =  StateService.WsConections[socket.ConnectionInfo.Id].UserName + " You are now baned",
+                errorMessage = exception.Message
+            }));
+            
+            socket.Close();
+        }
     }
 }
 

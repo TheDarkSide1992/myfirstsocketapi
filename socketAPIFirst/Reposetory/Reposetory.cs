@@ -37,4 +37,28 @@ FROM FirstFullStackProjectFourthSemester.message WHERE roomid = @romid;
             return conn.Query<ServerBroadcastMessageToRoom>(sql, new { romid });
         }
     }
+
+    public void banUser(string userName)
+    {
+        var sql = $@"INSERT INTO FirstFullStackProjectFourthSemester.banedUser(banedUsername) 
+                VALUES (@userName);
+        ";
+
+        using (var conn = _dataSource.OpenConnection())
+        {
+            conn.Query(sql, new {userName});
+        }
+    }
+
+    public bool isUserBaned(string userName)
+    {
+        var sql = $@"
+SELECT banedusername FROM FirstFullStackProjectFourthSemester.banedUser WHERE  banedUsername = @userName;
+        ";
+
+        using (var conn = _dataSource.OpenConnection())
+        {
+            return conn.Execute(sql, new { userName }) != 0;
+        }
+    }
 }
